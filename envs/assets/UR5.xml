@@ -1,0 +1,98 @@
+<mujoco model="ur5_no_contacts">
+    <compiler angle="radian" meshdir="mesh/visual/" texturedir="textures/" />
+    <option timestep="0.001" impratio="20" tolerance="1e-10" iterations="10">
+        <flag constraint="disable" contact="disable" />
+    </option>
+    <size njmax="600" nconmax="150" nstack="300000" />
+    <visual>
+        <quality shadowsize="2048" />
+        <map fogend="5" znear="0.05" />
+        <scale forcewidth="0.01" contactwidth="0.1" contactheight="0.005" framelength="0.1" framewidth="0.005" />
+    </visual>
+    <default class="main">
+        <joint armature="0.01" damping="0.1" />
+        <geom condim="4" solref="0.01 1" solimp="0.99 0.99 0.01 0.5 2" margin="0.001" />
+        <site group="3" type="ellipsoid" rgba="0.8 0.6 0.7 0.3" />
+        <default class="UR5">
+            <joint damping="65" />
+        </default>
+        <default class="UR5e">
+            <joint damping="45" />
+        </default>
+        <default class="GRIPPER">
+            <joint damping="5" />
+        </default>
+    </default>
+    <asset>
+        <texture type="2d" name="ur5_tex" builtin="flat" rgb1="0.45 0.45 0.45" width="32" height="32" />
+        <texture type="2d" name="gripper_tex" builtin="flat" rgb1="0.45 0.45 0.45" rgb2="0 0 0" width="32" height="32" />
+        <texture type="2d" name="bench_tex" builtin="flat" rgb1="0.7 0.7 0.7" width="32" height="32" />
+        <texture type="skybox" name="sky_tex" builtin="gradient" rgb1="1 1 1" rgb2="0.3 0.3 0.8" width="100" height="600" />
+        <texture type="cube" name="texgeom" builtin="flat" mark="cross" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" width="127" height="762" />
+        <texture type="2d" name="floor_tex" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" width="100" height="100" />
+        <texture type="cube" name="wood" file="wood2.png" />
+        <texture type="cube" name="metal" file="metal2.png" />
+        <material name="ur5_mat" texture="ur5_tex" specular="0.75" shininess="0.9" reflectance="0.3" />
+        <material name="gripper_mat" texture="gripper_tex" specular="0.75" shininess="0.9" reflectance="0.4" />
+        <material name="floor_mat" texture="floor_tex" texrepeat="10 10" specular="0.7" shininess="0.8" reflectance="0.5" />
+        <material name="geom" texture="texgeom" texuniform="true" />
+        <material name="bench_mat" texture="metal" shininess="0.1" reflectance="0.2" />
+        <material name="tablecube" texture="wood" rgba="0.8 0.8 0.8 1" />
+        <mesh name="base" file="base.stl" />
+        <mesh name="shoulder" file="shoulder.stl" />
+        <mesh name="upperarm" file="upperarm.stl" />
+        <mesh name="forearm" file="forearm.stl" />
+        <mesh name="wrist1" file="wrist1.stl" />
+        <mesh name="wrist2" file="wrist2.stl" />
+        <mesh name="wrist3" file="wrist3.stl" />
+    </asset>
+    <worldbody>
+        <geom name="floor" size="2.5 2.5 0.1" type="plane" material="floor_mat" />
+        <light name="light3" target="base_link" pos="1 1 3" dir="0 0 -1" directional="true" mode="targetbody" />
+        <body name="base_link" pos="0 0 1">
+            <inertial pos="-3.04147e-06 -0.000832447 0.00757937" quat="0.500201 0.499801 -0.501022 0.498974" mass="0.33636" diaginertia="0.000830863 0.000436732 0.000423013" />
+            <geom type="mesh" material="ur5_mat" mesh="base" />
+            <body name="shoulder_link" pos="0 0 0.089159">
+                <inertial pos="-3.16834e-06 0.00833437 0.00186356" quat="0.979134 -0.203212 -4.67557e-05 0.000743317" mass="1.33195" diaginertia="0.00295539 0.00272729 0.00246745" />
+                <joint name="shoulder_pan_joint" class="UR5" pos="0 0 0" axis="0 0 1" />
+                <geom type="mesh" material="ur5_mat" mesh="shoulder" />
+                <body name="upper_arm_link" pos="0 0.13585 0" quat="0.707107 0 0.707107 0">
+                    <inertial pos="1.05006e-09 0.00453623 0.212495" quat="1 -1.7999e-06 5.0485e-06 -1.44402e-06" mass="4.9595" diaginertia="0.120831 0.119791 0.00779386" />
+                    <joint name="shoulder_lift_joint" class="UR5" pos="0 0 0" axis="0 1 0" />
+                    <geom type="mesh" material="ur5_mat" mesh="upperarm" />
+                    <body name="forearm_link" pos="0 -0.1197 0.425">
+                        <inertial pos="-6.4011e-07 0.00288455 0.205814" quat="0.999492 0.0318739 3.50381e-07 3.33087e-05" mass="2.4397" diaginertia="0.0476379 0.0474507 0.00208267" />
+                        <joint name="elbow_joint" class="UR5" pos="0 0 0" axis="0 1 0" />
+                        <geom type="mesh" material="ur5_mat" mesh="forearm" />
+                        <body name="wrist_1_link" pos="0 0 0.39225" quat="0.707107 0 0.707107 0">
+                            <inertial pos="1.91311e-06 0.0890005 -0.00510674" quat="0.999964 0.00847377 3.60511e-05 -0.000261563" mass="0.44595" diaginertia="0.000529763 0.000494187 0.000349851" />
+                            <joint name="wrist_1_joint" class="UR5e" pos="0 0 0" axis="0 1 0" />
+                            <geom type="mesh" material="ur5_mat" mesh="wrist1" />
+                            <body name="wrist_2_link" pos="0 0.093 0">
+                                <inertial pos="-1.91219e-06 -0.00509383 0.0904448" quat="0.706908 0.707306 -0.00016419 0.0002133" mass="0.444758" diaginertia="0.000527329 0.000493077 0.000347787" />
+                                <joint name="wrist_2_joint" class="UR5e" pos="0 0 0" axis="0 0 1" />
+                                <geom type="mesh" material="ur5_mat" mesh="wrist2" />
+                                <body name="wrist_3_link" pos="0 0 0.09465">
+                                    <inertial pos="8.27932e-09 0.0639244 0.000225183" quat="0.707107 0.000623781 -0.000636088 0.707106" mass="0.128829" diaginertia="8.45498e-05 5.41732e-05 5.33607e-05" />
+                                    <joint name="wrist_3_joint" class="UR5e" pos="0 0 0" axis="0 1 0" />
+                                    <geom type="mesh" material="ur5_mat" mesh="wrist3" />
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="base" pos="0 0 0" quat="1.7949e-09 0 0 -1">
+                <inertial pos="0 0 0" quat="1.7949e-09 0 0 -1" mass="0" diaginertia="0 0 0" />
+            </body>
+        </body>
+    </worldbody>
+    <actuator>
+        <general name="shoulder_pan_T" joint="shoulder_pan_joint" ctrllimited="true" ctrlrange="-2 2" gear="101 0 0 0 0 0" />
+        <general name="shoulder_lift_T" joint="shoulder_lift_joint" ctrllimited="true" ctrlrange="-2 2" gear="101 0 0 0 0 0" />
+        <general name="forearm_T" joint="elbow_joint" ctrllimited="true" ctrlrange="-2 2" gear="101 0 0 0 0 0" />
+        <general name="wrist_1_T" joint="wrist_1_joint" ctrllimited="true" ctrlrange="-1 1" gear="101 0 0 0 0 0" />
+        <general name="wrist_2_T" joint="wrist_2_joint" ctrllimited="true" ctrlrange="-1 1" gear="101 0 0 0 0 0" />
+        <general name="wrist_3_T" joint="wrist_3_joint" ctrllimited="true" ctrlrange="-1 1" gear="101 0 0 0 0 0" />
+    </actuator>
+</mujoco>
